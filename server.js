@@ -95,6 +95,38 @@ var User = connection.define('user', {
   }
 });
 
+var Student = connection.define('student', {
+  firstname: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  lastname: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  username: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: true
+  },
+  password: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      len: {
+        args: [5,20],
+        msg: "Your password must be between 5-20 characters"
+      },
+    }
+  },
+}, {
+  hooks: {
+    beforeCreate: function(input){
+      input.password = bcrypt.hashSync(input.password, 10);
+    }
+  }
+});
+
 //handlebars setup
 var expressHandlebars = require('express-handlebars');
 app.engine('handlebars', expressHandlebars({
@@ -131,12 +163,22 @@ app.get("/student-login", function(req, res){
 app.get('/home', function(req, res){
   res.render('home', {
     user: req.user,
+    student: req.student,
     isAuthenticated: req.isAuthenticated()
   });
 });
 
-app.post("/save", function(req, res){
+app.post("/saveForTeacher", function(req, res){
   User.create(req.body).then(function(result){
+    res.redirect('/?msg=Account created. You may log in.');
+  }).catch(function(err) {
+    console.log(err);
+    res.redirect('/?msg=' + err.message);
+  });
+});
+
+app.post("/saveForStudent", function(req, res){
+  Student.create(req.body).then(function(result){
     res.redirect('/?msg=Account created. You may log in.');
   }).catch(function(err) {
     console.log(err);
