@@ -112,14 +112,22 @@ app.post('/check', passport.authenticate('local', {
 
 app.get("/", function(req, res){
   res.render('index', {msg: req.query.msg});
-})
+});
+
+app.get("/register", function(req, res){
+  res.render('register');
+});
+
+app.get("/login", function(req, res){
+  res.render('login');
+});
 
 app.get('/home', function(req, res){
   res.render('home', {
     user: req.user,
     isAuthenticated: req.isAuthenticated()
   });
-})
+});
 app.post("/save", function(req, res){
   User.create(req.body).then(function(result){
     res.redirect('/?msg=Account created');
@@ -127,7 +135,7 @@ app.post("/save", function(req, res){
     console.log(err);
     res.redirect('/?msg=' + err.message);
   });
-})
+});
 
 // database connection via sequelize
 connection.sync().then(function() {
