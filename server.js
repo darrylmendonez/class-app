@@ -83,7 +83,7 @@ var User = connection.define('user', {
       },
     }
   },
-  status: {
+  teachOrTA: {
     type: Sequelize.STRING,
     allowNull: false
   }
@@ -95,7 +95,6 @@ var User = connection.define('user', {
   }
 });
 
-
 //handlebars setup
 var expressHandlebars = require('express-handlebars');
 app.engine('handlebars', expressHandlebars({
@@ -105,21 +104,28 @@ app.set('view engine', 'handlebars');
 
 //check login with db
 app.post('/check', passport.authenticate('local', {
-    successRedirect: '/home',
-    failureRedirect: '/?msg=Login Credentials do not work'
+  successRedirect: '/home',
+  failureRedirect: '/?msg=Login Credentials do not work'
 }));
-
 
 app.get("/", function(req, res){
   res.render('index', {msg: req.query.msg});
 });
 
-app.get("/register", function(req, res){
-  res.render('register');
+app.get("/teacher-registration", function(req, res){
+  res.render('teacher-registration');
 });
 
-app.get("/login", function(req, res){
-  res.render('login');
+app.get("/student-registration", function(req, res){
+  res.render('student-registration');
+});
+
+app.get("/teacher-login", function(req, res){
+  res.render('teacher-login');
+});
+
+app.get("/student-login", function(req, res){
+  res.render('student-login');
 });
 
 app.get('/home', function(req, res){
@@ -128,9 +134,10 @@ app.get('/home', function(req, res){
     isAuthenticated: req.isAuthenticated()
   });
 });
+
 app.post("/save", function(req, res){
   User.create(req.body).then(function(result){
-    res.redirect('/?msg=Account created');
+    res.redirect('/?msg=Account created. You may log in.');
   }).catch(function(err) {
     console.log(err);
     res.redirect('/?msg=' + err.message);
