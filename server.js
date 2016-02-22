@@ -60,6 +60,14 @@ app.use(bodyParser.urlencoded({
 }));
 
 var User = connection.define('user', {
+  firstname: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  lastname: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   username: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -74,6 +82,10 @@ var User = connection.define('user', {
         msg: "Your password must be between 5-20 characters"
       },
     }
+  },
+  status: {
+    type: Sequelize.STRING,
+    allowNull: false
   }
 }, {
   hooks: {
@@ -113,7 +125,7 @@ app.post("/save", function(req, res){
     res.redirect('/?msg=Account created');
   }).catch(function(err) {
     console.log(err);
-    res.redirect('/?msg=' + err.errors[0].message);
+    res.redirect('/?msg=' + err.message);
   });
 })
 
